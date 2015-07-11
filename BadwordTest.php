@@ -2,10 +2,18 @@
 
 require 'Badword.php';
 
-class BadwordTest extends PHPUnit_Framework_TestCase {
+class BadwordTest extends PHPUnit_Framework_TestCase
+{
 
+    protected $badword;
 
-    public function existProvider() {
+    protected function setUp()
+    {
+        $this->badword = new Badword('badword.tree');
+    }
+
+    public function existProvider()
+    {
         return array(
             array(false, '*'),
             array(false, '**'),
@@ -21,7 +29,6 @@ class BadwordTest extends PHPUnit_Framework_TestCase {
             array(false, 'sms'),
             array(false, 'smart'),
             array(true, 'sm art'),
-            array(true, 'duxman'),
         );
     }
 
@@ -31,11 +38,12 @@ class BadwordTest extends PHPUnit_Framework_TestCase {
      */
     public function testExist($expected, $str)
     {
-        $this->assertSame($expected, Badword::exist($str));
+        $this->assertSame($expected, $this->badword->exist($str));
     }
 
 
-    public function replaceProvider() {
+    public function replaceProvider()
+    {
         return array(
             array('*', '*'),
             array('**', '**'),
@@ -52,7 +60,6 @@ class BadwordTest extends PHPUnit_Framework_TestCase {
             array('** art', 'sm art'),
             array('********', '甲乙甲乙丙丁丙丁'),
             array('****', '张三李四'),
-            array('******', 'duxman'),
         );
     }
 
@@ -60,7 +67,8 @@ class BadwordTest extends PHPUnit_Framework_TestCase {
     /**
      * @dataProvider replaceProvider
      */
-    public function testReplace($expected, $str) {
-        $this->assertSame($expected, Badword::replace($str));
+    public function testReplace($expected, $str)
+    {
+        $this->assertSame($expected, $this->badword->replace($str));
     }
 }
