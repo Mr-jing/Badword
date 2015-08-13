@@ -3,14 +3,19 @@
 class Badword
 {
 
-    private $path = '';
-    private $trie = null;
-    private $isEnable = true;
+    protected $defaultFileName = 'badwords.tree';
+    protected $path = '';
+    protected $dirname = '';
+    protected $trie = null;
+    protected $isEnable = true;
 
 
     public function __construct($path)
     {
         $this->path = $path;
+
+        $pathinfo = pathinfo($path);
+        $this->dirname = $pathinfo['dirname'];
 
         if (is_file($path)) {
             $this->trie = trie_filter_load($this->path);
@@ -209,16 +214,14 @@ class Badword
     /**
      * 重新生成敏感词树结构文件
      */
-    public static function create()
+    public function create($words)
     {
-        $badwords = file(dirname(__FILE__) . '/dirty.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
         $trie = trie_filter_new();
-        foreach ($badwords as $badword) {
-            trie_filter_store($trie, $badword);
+        foreach ($words as $word) {
+            trie_filter_store($trie, $word);
         }
 
-        trie_filter_save($trie, dirname(__FILE__) . '/blackword.tree');
+        trie_filter_save($trie, $this->dirname . DIRECTORY_SEPARATOR . $this->defaultFileName);
     }
 
 }
